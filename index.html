@@ -340,8 +340,18 @@
         </div>
     </div>
 
-    <!-- JavaScript to make the UI work -->
+    <!-- Import Supabase from the official CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
+        // YOUR CUSTOM SUPABASE KEYS
+        const SUPABASE_URL = 'https://ddejzrmppzddxodgspyi.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'sb_publishable_Vtp_NZCF-_zhq3ISSFUZhA_9jNwSha2';
+
+        // Initialize Supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Get your form elements
         const modal = document.getElementById('uploadModal');
         const openBtn = document.getElementById('openUploadBtn');
         const closeBtn = document.getElementById('closeUploadBtn');
@@ -367,46 +377,76 @@
             }
         });
 
-        // Handle Form Submission (Simulating the upload)
-        form.addEventListener('submit', (e) => {
-            e.preventDefault(); // Prevent page reload
+        // THE REAL UPLOAD LOGIC
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); 
             
-            // Get user input
+            const file = fileInput.files[0];
+            if (!file) return alert("Please select a file first!");
+
             const title = document.getElementById('gameTitle').value;
             const desc = document.getElementById('gameDesc').value;
-            let imgUrl = document.getElementById('gameImage').value;
-            const file = fileInput.files[0];
+            let imgUrl = document.getElementById('gameImage').value || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop';
 
-            // Default image if none provided
-            if(!imgUrl) {
-                imgUrl = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop';
+            // Change button text to show progress
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.textContent = "Uploading to Vault... Please wait.";
+            submitBtn.disabled = true;
+
+            try {
+                // Upload the file to the 'games' bucket
+                const uniqueFileName = Date.now() + '_' + file.name;
+                
+                const { data, error } = await supabase.storage
+                    .from('games')
+                    .upload(uniqueFileName, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+
+                if (error) {
+                    throw error;
+                }
+
+                // Get the real, permanent public download link
+                const { data: publicUrlData } = supabase.storage
+                    .from('games')
+                    .getPublicUrl(uniqueFileName);
+
+                const realDownloadLink = publicUrlData.publicUrl;
+
+                alert("Upload Complete! The game is now live.");
+
+                // Visually add the game to the grid so you can see it immediately
+                if (emptyState) emptyState.remove();
+
+                const newCard = document.createElement('div');
+                newCard.className = 'card';
+                newCard.innerHTML = `
+                    <div class="card-img" style="background: url('${imgUrl}') center/cover;"></div>
+                    <div class="card-content">
+                        <h3 class="card-title">${title}</h3>
+                        <p class="card-desc">${desc}</p>
+                        <a href="${realDownloadLink}" class="btn-download" target="_blank" download>Download</a>
+                    </div>
+                `;
+
+                grid.appendChild(newCard);
+
+                // Reset the form
+                form.reset();
+                fileNameDisplay.textContent = "Click to select file...";
+                fileNameDisplay.style.color = "var(--text-muted)";
+                submitBtn.textContent = "Publish to Store";
+                submitBtn.disabled = false;
+                modal.classList.remove('active');
+
+            } catch (error) {
+                console.error("Upload failed:", error.message);
+                alert("Upload failed: " + error.message);
+                submitBtn.textContent = "Publish to Store";
+                submitBtn.disabled = false;
             }
-
-            // Remove empty state if it exists
-            if (emptyState) {
-                emptyState.remove();
-            }
-
-            // Create new game card HTML
-            const newCard = document.createElement('div');
-            newCard.className = 'card';
-            newCard.innerHTML = `
-                <div class="card-img" style="background: url('${imgUrl}') center/cover;"></div>
-                <div class="card-content">
-                    <h3 class="card-title">${title}</h3>
-                    <p class="card-desc">${desc}</p>
-                    <button class="btn-download" onclick="alert('In a real app, this would download ${file.name}!')">Download ${file.name}</button>
-                </div>
-            `;
-
-            // Add the new card to the grid
-            grid.appendChild(newCard);
-
-            // Reset form and close modal
-            form.reset();
-            fileNameDisplay.textContent = "Click to select file...";
-            fileNameDisplay.style.color = "var(--text-muted)";
-            modal.classList.remove('active');
         });
     </script>
 </body>
