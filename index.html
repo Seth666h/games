@@ -146,16 +146,15 @@
         .file-box span { color: var(--blue-primary); font-weight: 600; }
 
         /* Custom Toast Notifications */
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast {
             background: #fff; color: #000; padding: 12px 20px; border-radius: 8px; font-weight: 500; font-size: 0.9rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;
-            animation: slideIn 0.3s ease forwards, fadeOut 0.3s ease 3s forwards;
+            animation: slideIn 0.3s ease forwards, fadeOut 0.3s ease 3s forwards; pointer-events: all;
         }
         .toast.error { background: #ef4444; color: #fff; }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
-
     </style>
 </head>
 <body>
@@ -218,25 +217,33 @@
     <!-- Toast Container -->
     <div id="toast-container"></div>
 
-    <!-- Supabase Logic -->
+    <!-- 1. Import Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
-        // --- YOUR ACTUAL KEYS LOADED HERE ---
-        const SUPABASE_URL = 'https://ddejzrmppzddxodgspyi.supabase.co'; 
-        const SUPABASE_ANON_KEY = 'sb_publishable_Vtp_NZCF-_zhq3ISSFUZhA_9jNwSha2';
-
-        // Initialize Supabase directly
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // --- UI Logic ---
+        // --- 2. LOAD UI ELEMENTS FIRST (Guarantees buttons work) ---
         const modal = document.getElementById('uploadModal');
+        const openBtn = document.getElementById('openUploadBtn');
+        const closeBtn = document.getElementById('closeUploadBtn');
         const fileInput = document.getElementById('gameFile');
         const fileBox = document.getElementById('fileBox');
         const fileNameDisplay = document.getElementById('fileNameDisplay');
         const form = document.getElementById('uploadForm');
         const submitBtn = document.getElementById('submitBtn');
 
-        // Toast Notification System (Replaces Alerts)
+        // Modal triggers
+        openBtn.addEventListener('click', () => { modal.classList.add('active'); });
+        closeBtn.addEventListener('click', () => { modal.classList.remove('active'); });
+        
+        // File Selection visual update
+        fileBox.addEventListener('click', () => { fileInput.click(); });
+        fileInput.addEventListener('change', (e) => {
+            if(e.target.files[0]) {
+                fileNameDisplay.innerHTML = `Selected: <span>${e.target.files[0].name}</span>`;
+            }
+        });
+
+        // Toast Notification System
         function showToast(message, isError = false) {
             const toast = document.createElement('div');
             toast.className = `toast ${isError ? 'error' : ''}`;
@@ -245,32 +252,41 @@
             setTimeout(() => toast.remove(), 3500);
         }
 
-        // Modal triggers
-        document.getElementById('openUploadBtn').onclick = () => modal.classList.add('active');
-        document.getElementById('closeUploadBtn').onclick = () => modal.classList.remove('active');
-        
-        // File Selection visual update
-        fileBox.onclick = () => fileInput.click();
-        fileInput.onchange = (e) => {
-            if(e.target.files[0]) {
-                fileNameDisplay.innerHTML = `Selected: <span>${e.target.files[0].name}</span>`;
+        // --- 3. CONNECT DATABASE SAFELY ---
+        let supabase;
+        try {
+            const SUPABASE_URL = 'https://ddejzrmppzddxodgspyi.supabase.co'; 
+            const SUPABASE_ANON_KEY = 'sb_publishable_Vtp_NZCF-_zhq3ISSFUZhA_9jNwSha2';
+            if (window.supabase) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } else {
+                throw new Error("Supabase library did not load.");
             }
-        };
+        } catch (err) {
+            console.error("Database connection failed:", err);
+            showToast("Warning: Database disconnected. Check your connection or ad-blocker.", true);
+        }
 
-        // --- REAL Upload Logic ---
-        form.onsubmit = async (e) => {
+        // --- 4. REAL UPLOAD LOGIC ---
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            if (!supabase) {
+                showToast("Cannot upload. The database connection is blocked.", true);
+                return;
+            }
+
             const file = fileInput.files[0];
             const title = document.getElementById('gameTitle').value;
             const desc = document.getElementById('gameDesc').value;
             let imgUrl = document.getElementById('gameImage').value || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop';
 
-            submitBtn.textContent = "Processing...";
+            submitBtn.textContent = "Uploading to server...";
             submitBtn.disabled = true;
 
             try {
                 showToast("Uploading to secure vault...");
-                const uniqueFileName = Date.now() + '_' + file.name;
+                const uniqueFileName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
                 
                 // Upload to the 'games' bucket
                 const { error } = await supabase.storage.from('games').upload(uniqueFileName, file, { cacheControl: '3600' });
@@ -293,7 +309,7 @@
                     <div class="card-content">
                         <h3 class="card-title">${title}</h3>
                         <p class="card-desc">${desc}</p>
-                        <a href="${downloadLink}" class="btn-download" target="_blank" download>Download ${file.name}</a>
+                        <a href="${downloadLink}" class="btn-download" target="_blank" download>Download</a>
                     </div>
                 `;
                 document.getElementById('gameGrid').appendChild(card);
@@ -304,12 +320,13 @@
                 fileNameDisplay.innerHTML = "Drag & Drop or <span>Browse</span>";
                 
             } catch (error) {
+                console.error(error);
                 showToast(error.message, true);
             } finally {
                 submitBtn.textContent = "Publish to Store";
                 submitBtn.disabled = false;
             }
-        };
+        });
     </script>
 </body>
 </html>
