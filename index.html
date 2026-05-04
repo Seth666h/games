@@ -116,7 +116,6 @@
 
     <nav>
         <div class="logo"><div class="logo-icon"></div> Aqua</div>
-        <!-- NO INLINE ONCLICK HERE -->
         <button class="btn" id="navUploadBtn">
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
             Upload Software
@@ -139,11 +138,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Publish Title</h2>
-                <!-- NO INLINE ONCLICK HERE -->
                 <button class="close-btn" id="closeModalBtn">&times;</button>
             </div>
             
-            <!-- NO INLINE ONSUBMIT HERE -->
             <form id="uploadForm">
                 <div class="form-group">
                     <label>Software Name</label>
@@ -159,10 +156,8 @@
                 </div>
                 <div class="form-group">
                     <label>Game File</label>
-                    <!-- NO INLINE ONCLICK HERE -->
                     <div class="file-box" id="fileBoxArea">
                         <p id="fileNameDisplay">Drag & Drop or <span style="color:#3b82f6;">Browse Files</span></p>
-                        <!-- NO INLINE ONCHANGE HERE -->
                         <input type="file" id="gameFile" accept=".exe,.zip,.rar" style="display: none;" required>
                     </div>
                 </div>
@@ -176,12 +171,10 @@
     <!-- SUPABASE SCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- BULLETPROOF EVENT LISTENERS -->
     <script>
-        // Wait for the entire page to load securely before attaching buttons
         document.addEventListener('DOMContentLoaded', () => {
             
-            // 1. Grab all our HTML elements
+            // 1. Grab UI Elements
             const navUploadBtn = document.getElementById('navUploadBtn');
             const uploadModal = document.getElementById('uploadModal');
             const closeModalBtn = document.getElementById('closeModalBtn');
@@ -191,7 +184,7 @@
             const submitBtn = document.getElementById('submitBtn');
             const fileNameDisplay = document.getElementById('fileNameDisplay');
 
-            // 2. Setup the Toast Notification function
+            // 2. Toast System
             function showToast(message, icon = "✅") {
                 const toast = document.createElement('div');
                 toast.className = 'toast';
@@ -200,29 +193,24 @@
                 setTimeout(() => toast.remove(), 3500);
             }
 
-            // 3. Setup Button Clicks Safely
-            navUploadBtn.addEventListener('click', () => {
-                uploadModal.classList.add('active');
-            });
-
+            // 3. UI Interactions
+            navUploadBtn.addEventListener('click', () => { uploadModal.classList.add('active'); });
+            
             closeModalBtn.addEventListener('click', () => {
                 uploadModal.classList.remove('active');
                 uploadForm.reset();
                 fileNameDisplay.innerHTML = 'Drag & Drop or <span style="color:#3b82f6;">Browse Files</span>';
             });
 
-            // 4. Setup File Picker Safely
-            fileBoxArea.addEventListener('click', () => {
-                gameFile.click();
-            });
-
+            fileBoxArea.addEventListener('click', () => { gameFile.click(); });
+            
             gameFile.addEventListener('change', (e) => {
                 if(e.target.files && e.target.files.length > 0) {
                     fileNameDisplay.innerHTML = `Selected: <span style="color: #60a5fa">${e.target.files[0].name}</span>`;
                 }
             });
 
-            // 5. Setup Supabase
+            // 4. Initialize Database
             const SUPABASE_URL = 'https://ddejzrmppzddxodgspyi.supabase.co'; 
             const SUPABASE_ANON_KEY = 'sb_publishable_Vtp_NZCF-_zhq3ISSFUZhA_9jNwSha2';
             let supabase = null;
@@ -233,9 +221,9 @@
                 showToast("Database library blocked by browser.", "⚠️");
             }
 
-            // 6. Handle the Actual Upload Safely
+            // 5. Upload Logic
             uploadForm.addEventListener('submit', async (e) => {
-                e.preventDefault(); // This is the magic line that stops the page from refreshing into nothing!
+                e.preventDefault(); 
                 
                 if (!supabase) {
                     showToast("Database not connected. Please turn off AdBlockers.", "❌");
@@ -247,7 +235,6 @@
                 const desc = document.getElementById('gameDesc').value;
                 let imgUrl = document.getElementById('gameImage').value || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop';
 
-                // Instantly tell the user we are working
                 submitBtn.innerHTML = "⏳ Uploading to Server... Please wait.";
                 submitBtn.disabled = true;
 
@@ -257,19 +244,17 @@
                     const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
                     const uniqueFileName = Date.now() + '_' + safeName;
                     
-                    // Upload File
-                    const { error } = await supabase.storage.from('games').upload(uniqueFileName, file, { cacheControl: '3600' });
+                    // UPLOAD TO 'game' BUCKET
+                    const { error } = await supabase.storage.from('game').upload(uniqueFileName, file, { cacheControl: '3600' });
                     if (error) throw error;
 
-                    // Get Link
-                    const { data } = supabase.storage.from('games').getPublicUrl(uniqueFileName);
+                    // GET LINK FROM 'game' BUCKET
+                    const { data } = supabase.storage.from('game').getPublicUrl(uniqueFileName);
                     const downloadLink = data.publicUrl;
 
-                    // Remove Empty State
                     const emptyState = document.getElementById('emptyState');
                     if(emptyState) emptyState.remove();
 
-                    // Create Game Card
                     const card = document.createElement('div');
                     card.className = 'card';
                     card.innerHTML = `
@@ -284,7 +269,6 @@
                     
                     showToast("Upload Successful!");
                     
-                    // Close Modal
                     uploadModal.classList.remove('active');
                     uploadForm.reset();
                     fileNameDisplay.innerHTML = 'Drag & Drop or <span style="color:#3b82f6;">Browse Files</span>';
