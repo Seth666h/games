@@ -3,181 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aqua | Digital Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <title>Aqua | Premium Vault</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Modern Variables */
+        /* === PREMIUM THEME & VARIABLES === */
         :root {
-            --bg-dark: #05080f;
-            --bg-card: #0b1221;
-            --blue-primary: #3b82f6;
-            --blue-hover: #2563eb;
-            --blue-glow: rgba(59, 130, 246, 0.3);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.1);
+            --bg-base: #030712;
+            --glass-bg: rgba(17, 24, 39, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent: #8b5cf6;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-base);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* Glassmorphism Navigation */
+        /* === ANIMATED BACKGROUND BLOBS === */
+        .bg-fx { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; animation: float 15s infinite alternate ease-in-out; }
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--primary); }
+        .blob-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: var(--accent); animation-delay: -5s; }
+        @keyframes float { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(50px) scale(1.1); } }
+
+        /* === GLASS NAVIGATION === */
         nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 5%;
-            background: rgba(5, 8, 15, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.2rem 5%; position: sticky; top: 0; z-index: 100;
+            background: rgba(3, 7, 18, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
         }
+        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
+        .logo-icon { width: 24px; height: 24px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 6px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
 
-        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; color: #fff; }
-        .logo-icon { width: 20px; height: 20px; background: var(--blue-primary); border-radius: 4px; box-shadow: 0 0 15px var(--blue-glow); }
-
-        /* Buttons */
-        .btn-primary {
-            background: var(--blue-primary);
-            color: #fff;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
+        /* === BUTTONS === */
+        .btn {
+            background: linear-gradient(135deg, var(--primary), #2563eb); color: #fff;
+            border: none; padding: 0.7rem 1.5rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem;
+            cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); border: 1px solid rgba(255,255,255,0.1);
         }
-        .btn-primary:hover:not(:disabled) { background: var(--blue-hover); box-shadow: 0 4px 20px var(--blue-glow); transform: translateY(-1px); }
-        .btn-primary:active:not(:disabled) { transform: translateY(1px); }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); filter: brightness(1.1); }
+        .btn:active { transform: translateY(1px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        /* Hero */
-        .hero { text-align: center; padding: 5rem 20px 3rem; }
-        .hero h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; letter-spacing: -1px; }
-
-        /* Store Grid */
-        .store-container { padding: 0 5% 4rem; max-width: 1200px; margin: 0 auto; flex: 1; width: 100%; }
-        .section-header { display: flex; align-items: center; gap: 15px; margin-bottom: 2rem; color: var(--text-muted); font-weight: 500; }
-        .section-header::after { content: ""; height: 1px; flex: 1; background: var(--border-color); }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; width: 100%; }
+        /* === HERO & LAYOUT === */
+        .hero { text-align: center; padding: 6rem 20px 4rem; }
+        .hero h1 { font-size: 4rem; font-weight: 800; letter-spacing: -2px; margin-bottom: 1rem; background: linear-gradient(to right, #fff, #9ca3af); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* Cards */
+        .container { padding: 0 5% 4rem; max-width: 1400px; margin: 0 auto; width: 100%; flex: 1; }
+        .section-header { font-size: 1.25rem; font-weight: 600; margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem; }
+        .section-header::after { content: ""; flex: 1; height: 1px; background: var(--glass-border); }
+
+        /* === GRID & CARDS === */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+        
         .card {
-            background: var(--bg-card);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px;
+            overflow: hidden; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            transition: all 0.3s ease; display: flex; flex-direction: column;
         }
-        .card:hover { border-color: var(--blue-primary); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .card-img { width: 100%; height: 160px; background-color: #111827; }
-        .card-content { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
-        .card-title { font-size: 1.2rem; color: #fff; margin-bottom: 0.5rem; }
-        .card-desc { color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1.5rem; flex: 1; }
+        .card:hover { transform: translateY(-5px); border-color: rgba(59, 130, 246, 0.4); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .card-img { width: 100%; height: 180px; background: #1f2937; position: relative; }
+        .card-content { padding: 1.5rem; display: flex; flex-direction: column; flex: 1; }
+        .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .card-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; flex: 1; }
         
         .btn-download {
-            width: 100%;
-            padding: 0.8rem;
-            text-align: center;
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--blue-primary);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.2s ease;
+            width: 100%; padding: 0.8rem; text-align: center; background: rgba(255,255,255,0.05);
+            color: #fff; border: 1px solid var(--glass-border); border-radius: 8px; text-decoration: none;
+            font-weight: 600; transition: all 0.2s ease;
         }
-        .btn-download:hover { background: var(--blue-primary); color: #fff; }
+        .btn-download:hover { background: var(--primary); border-color: var(--primary); }
 
-        /* Empty State */
-        .empty-state { grid-column: 1 / -1; background: var(--bg-card); border: 1px dashed var(--border-color); border-radius: 12px; padding: 4rem 2rem; text-align: center; }
-        .empty-state h3 { color: #fff; margin: 1rem 0 0.5rem; }
+        /* === EMPTY STATE === */
+        .empty-state {
+            grid-column: 1 / -1; background: var(--glass-bg); border: 1px dashed rgba(255,255,255,0.2);
+            border-radius: 16px; padding: 5rem 2rem; text-align: center; backdrop-filter: blur(12px);
+        }
 
-        /* Modal Overhaul */
+        /* === THE MODAL (POPUP) === */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
             display: flex; justify-content: center; align-items: center;
-            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         
         .modal-content {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 2rem; width: 90%; max-width: 450px;
-            transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+            padding: 2.5rem; width: 90%; max-width: 500px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95) translateY(20px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
 
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.2s; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .modal-header h2 { font-size: 1.5rem; font-weight: 700; }
+        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 2rem; cursor: pointer; transition: color 0.2s; line-height: 1; }
         .close-btn:hover { color: #fff; }
 
-        .form-group { margin-bottom: 1.2rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500; color: #d1d5db; }
         .form-group input, .form-group textarea {
-            width: 100%; padding: 0.8rem; background: var(--bg-dark); border: 1px solid var(--border-color);
-            color: #fff; border-radius: 8px; font-size: 0.9rem; transition: border-color 0.2s;
+            width: 100%; padding: 0.8rem 1rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            color: #fff; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--blue-primary); }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
         
         .file-box {
-            border: 2px dashed var(--border-color); padding: 1.5rem; text-align: center;
-            border-radius: 8px; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.02);
+            border: 2px dashed rgba(255,255,255,0.2); padding: 2rem; text-align: center; border-radius: 12px;
+            cursor: pointer; transition: all 0.2s; background: rgba(0,0,0,0.2);
         }
-        .file-box:hover { border-color: var(--blue-primary); background: rgba(59, 130, 246, 0.05); }
-        .file-box span { color: var(--blue-primary); font-weight: 600; }
+        .file-box:hover { border-color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+        .file-box p { color: var(--text-muted); font-size: 0.95rem; }
+        .file-box span { color: var(--primary); font-weight: 600; }
 
-        /* Custom Toast Notifications */
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        /* === TOAST NOTIFICATIONS === */
+        #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
         .toast {
-            background: #fff; color: #000; padding: 12px 20px; border-radius: 8px; font-weight: 500; font-size: 0.9rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px;
-            animation: slideIn 0.3s ease forwards, fadeOut 0.3s ease 3s forwards; pointer-events: all;
+            background: #1e293b; color: #fff; padding: 16px 24px; border-radius: 12px; font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; gap: 12px; pointer-events: all;
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards, fadeOut 0.4s ease 3s forwards;
         }
-        .toast.error { background: #ef4444; color: #fff; }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }
         @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
     </style>
 </head>
 <body>
 
+    <!-- Animated Background -->
+    <div class="bg-fx">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <!-- Navigation -->
     <nav>
         <div class="logo"><div class="logo-icon"></div> Aqua</div>
-        <button class="btn-primary" id="openUploadBtn">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
-            Upload Game
+        <!-- ONCLICK IS BUILT DIRECTLY INTO HTML SO IT CAN NEVER FAIL -->
+        <button class="btn" onclick="openModal()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+            Upload Software
         </button>
     </nav>
 
+    <!-- Header -->
     <header class="hero">
         <h1>The Vault</h1>
     </header>
 
-    <main class="store-container">
+    <!-- Main Library -->
+    <main class="container">
         <div class="section-header">Library</div>
         <div class="grid" id="gameGrid">
             <div class="empty-state" id="emptyState">
-                <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-opacity="0.3" viewBox="0 0 24 24"><path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                <h3>Repository Empty</h3>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Click the upload button to add software.</p>
+                <svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.3" viewBox="0 0 24 24" style="margin-bottom: 1rem;"><path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Repository Empty</h3>
+                <p style="color: var(--text-muted);">Click "Upload Software" to populate your store.</p>
             </div>
         </div>
     </main>
@@ -186,122 +181,122 @@
     <div class="modal-overlay" id="uploadModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 style="font-size: 1.2rem;">Upload New Title</h2>
-                <button class="close-btn" id="closeUploadBtn">&times;</button>
+                <h2>Publish Title</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
-            <form id="uploadForm">
+            
+            <form id="uploadForm" onsubmit="handleUpload(event)">
                 <div class="form-group">
-                    <label>Software Title</label>
-                    <input type="text" id="gameTitle" required>
+                    <label>Software Name</label>
+                    <input type="text" id="gameTitle" placeholder="e.g., Grand Theft Auto V" required>
                 </div>
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea id="gameDesc" rows="2" required></textarea>
+                    <textarea id="gameDesc" rows="2" placeholder="Version details, requirements..." required></textarea>
                 </div>
                 <div class="form-group">
                     <label>Cover Image URL (Optional)</label>
-                    <input type="url" id="gameImage">
+                    <input type="url" id="gameImage" placeholder="https://...">
                 </div>
                 <div class="form-group">
-                    <label>Upload File</label>
-                    <div class="file-box" id="fileBox">
-                        <p id="fileNameDisplay">Drag & Drop or <span>Browse</span></p>
-                        <input type="file" id="gameFile" accept=".exe,.zip,.rar" style="display: none;" required>
+                    <label>Game File</label>
+                    <div class="file-box" onclick="document.getElementById('gameFile').click()">
+                        <p id="fileNameDisplay">Drag & Drop or <span>Browse Files</span></p>
+                        <input type="file" id="gameFile" accept=".exe,.zip,.rar" style="display: none;" onchange="updateFileName(this)" required>
                     </div>
                 </div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;" id="submitBtn">Publish to Store</button>
+                <button type="submit" class="btn" style="width: 100%; justify-content: center; padding: 1rem;" id="submitBtn">Deploy to Vault</button>
             </form>
         </div>
     </div>
 
-    <!-- Toast Container -->
+    <!-- Toast Notifications -->
     <div id="toast-container"></div>
 
-    <!-- 1. Import Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
+    <!-- ========================================== -->
+    <!-- SCRIPT 1: BULLETPROOF UI (NEVER FAILS)     -->
+    <!-- ========================================== -->
     <script>
-        // --- 2. LOAD UI ELEMENTS FIRST (Guarantees buttons work) ---
-        const modal = document.getElementById('uploadModal');
-        const openBtn = document.getElementById('openUploadBtn');
-        const closeBtn = document.getElementById('closeUploadBtn');
-        const fileInput = document.getElementById('gameFile');
-        const fileBox = document.getElementById('fileBox');
-        const fileNameDisplay = document.getElementById('fileNameDisplay');
-        const form = document.getElementById('uploadForm');
-        const submitBtn = document.getElementById('submitBtn');
-
-        // Modal triggers
-        openBtn.addEventListener('click', () => { modal.classList.add('active'); });
-        closeBtn.addEventListener('click', () => { modal.classList.remove('active'); });
+        // These functions control the HTML directly. They do not rely on the database.
+        function openModal() {
+            document.getElementById('uploadModal').classList.add('active');
+        }
         
-        // File Selection visual update
-        fileBox.addEventListener('click', () => { fileInput.click(); });
-        fileInput.addEventListener('change', (e) => {
-            if(e.target.files[0]) {
-                fileNameDisplay.innerHTML = `Selected: <span>${e.target.files[0].name}</span>`;
-            }
-        });
+        function closeModal() {
+            document.getElementById('uploadModal').classList.remove('active');
+            document.getElementById('uploadForm').reset();
+            document.getElementById('fileNameDisplay').innerHTML = 'Drag & Drop or <span>Browse Files</span>';
+        }
 
-        // Toast Notification System
-        function showToast(message, isError = false) {
+        function updateFileName(input) {
+            const display = document.getElementById('fileNameDisplay');
+            if(input.files && input.files.length > 0) {
+                display.innerHTML = `Selected: <span style="color: #60a5fa">${input.files[0].name}</span>`;
+            }
+        }
+
+        function showToast(message, icon = "✅") {
             const toast = document.createElement('div');
-            toast.className = `toast ${isError ? 'error' : ''}`;
-            toast.innerHTML = isError ? `⚠️ ${message}` : `✅ ${message}`;
+            toast.className = 'toast';
+            toast.innerHTML = `${icon} ${message}`;
             document.getElementById('toast-container').appendChild(toast);
             setTimeout(() => toast.remove(), 3500);
         }
+    </script>
 
-        // --- 3. CONNECT DATABASE SAFELY ---
+    <!-- ========================================== -->
+    <!-- SCRIPT 2: SUPABASE DATABASE LOGIC          -->
+    <!-- ========================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Connect to your specific database
+        const SUPABASE_URL = 'https://ddejzrmppzddxodgspyi.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'sb_publishable_Vtp_NZCF-_zhq3ISSFUZhA_9jNwSha2';
+        
         let supabase;
         try {
-            const SUPABASE_URL = 'https://ddejzrmppzddxodgspyi.supabase.co'; 
-            const SUPABASE_ANON_KEY = 'sb_publishable_Vtp_NZCF-_zhq3ISSFUZhA_9jNwSha2';
-            if (window.supabase) {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            } else {
-                throw new Error("Supabase library did not load.");
-            }
-        } catch (err) {
-            console.error("Database connection failed:", err);
-            showToast("Warning: Database disconnected. Check your connection or ad-blocker.", true);
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (e) {
+            console.error("Database failed to load", e);
         }
 
-        // --- 4. REAL UPLOAD LOGIC ---
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Handle the actual upload process
+        async function handleUpload(event) {
+            event.preventDefault(); // Stops the page from refreshing
             
             if (!supabase) {
-                showToast("Cannot upload. The database connection is blocked.", true);
+                showToast("Database not connected. Please refresh.", "⚠️");
                 return;
             }
 
-            const file = fileInput.files[0];
+            const file = document.getElementById('gameFile').files[0];
             const title = document.getElementById('gameTitle').value;
             const desc = document.getElementById('gameDesc').value;
-            let imgUrl = document.getElementById('gameImage').value || 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop';
+            let imgUrl = document.getElementById('gameImage').value || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop';
+            const submitBtn = document.getElementById('submitBtn');
 
-            submitBtn.textContent = "Uploading to server...";
+            submitBtn.innerHTML = "⏳ Uploading to Server...";
             submitBtn.disabled = true;
 
             try {
-                showToast("Uploading to secure vault...");
-                const uniqueFileName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+                showToast("Upload started, please wait...", "⏳");
                 
-                // Upload to the 'games' bucket
+                // Clean the file name so there are no weird characters
+                const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+                const uniqueFileName = Date.now() + '_' + safeName;
+                
+                // 1. Upload to Supabase 'games' bucket
                 const { error } = await supabase.storage.from('games').upload(uniqueFileName, file, { cacheControl: '3600' });
                 if (error) throw error;
 
-                // Get the direct public URL
+                // 2. Get Download Link
                 const { data } = supabase.storage.from('games').getPublicUrl(uniqueFileName);
                 const downloadLink = data.publicUrl;
-                showToast("Upload Live!");
 
-                // Remove Empty State visually
+                // 3. Update the Screen Visually
                 const emptyState = document.getElementById('emptyState');
                 if(emptyState) emptyState.remove();
 
-                // Build the Game Card and add it to the screen
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
@@ -309,24 +304,23 @@
                     <div class="card-content">
                         <h3 class="card-title">${title}</h3>
                         <p class="card-desc">${desc}</p>
-                        <a href="${downloadLink}" class="btn-download" target="_blank" download>Download</a>
+                        <a href="${downloadLink}" class="btn-download" target="_blank" download>Download Game</a>
                     </div>
                 `;
-                document.getElementById('gameGrid').appendChild(card);
-
-                // Reset Modal
-                modal.classList.remove('active');
-                form.reset();
-                fileNameDisplay.innerHTML = "Drag & Drop or <span>Browse</span>";
+                
+                document.getElementById('gameGrid').prepend(card);
+                
+                showToast("Upload Successful!");
+                closeModal(); // Close the popup automatically
                 
             } catch (error) {
                 console.error(error);
-                showToast(error.message, true);
+                showToast(error.message, "❌");
             } finally {
-                submitBtn.textContent = "Publish to Store";
+                submitBtn.innerHTML = "Deploy to Vault";
                 submitBtn.disabled = false;
             }
-        });
+        }
     </script>
 </body>
 </html>
