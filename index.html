@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aqua | Digital Storefront</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Core Variables & Modern Reset */
+        :root {
+            --bg-dark: #070b14;
+            --bg-card: #0d1526;
+            --blue-primary: #3b82f6;
+            --blue-light: #60a5fa;
+            --blue-glow: rgba(59, 130, 246, 0.4);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(59, 130, 246, 0.2);
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at top right, rgba(29, 78, 216, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at bottom left, rgba(30, 58, 138, 0.15) 0%, transparent 40%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(7, 11, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--blue-primary);
+            border-radius: 4px;
+            box-shadow: 0 0 10px var(--blue-glow);
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { 
+            color: var(--blue-light); 
+        }
+
+        .nav-links .active {
+            color: var(--text-main);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 6rem 20px 4rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #fff 0%, var(--blue-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Store Container & Empty State */
+        .store-container {
+            padding: 2rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            flex: 1;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::after {
+            content: "";
+            height: 1px;
+            flex: 1;
+            background: var(--border-color);
+        }
+
+        .empty-state {
+            background: var(--bg-card);
+            border: 1px dashed var(--blue-primary);
+            border-radius: 12px;
+            padding: 5rem 2rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: var(--text-main);
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(7, 11, 20, 0.9);
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-icon"></div>
+            Aqua
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active">Discover</a>
+            <a href="#">Browse</a>
+            <a href="#">Log In</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Welcome to the Vault</h1>
+        <p>A fast, clean, and secure distribution platform for your digital software and applications.</p>
+    </header>
+
+    <main class="store-container">
+        <h2 class="section-title">Latest Releases</h2>
+        
+        <!-- Empty State Container (No Games) -->
+        <div class="empty-state">
+            <div class="empty-state-icon">📁</div>
+            <h3>No software found</h3>
+            <p>The repository is currently empty. Check back later for new uploads.</p>
+        </div>
+        
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Aqua Platform. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
